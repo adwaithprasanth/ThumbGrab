@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThumbGrab</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+          rel="stylesheet"
+          integrity="sha384-qaN4jIrK3TZw+uQ19bgUe+MOfxwaAX0OxkQ06eDbwzE2GPLod+yb7c7hB+N9XG*v"
+          crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="page-wrapper">
+
+        <!-- ── Hero ────────────────────────────────────────── -->
+        <header class="hero">
+            <div class="hero__content">
+                <h1><i class="fa-solid fa-image"></i> ThumbGrab</h1>
+                <p>Instantly fetch high-resolution YouTube thumbnails.</p>
+            </div>
+            <div class="hero__bg"></div>
+        </header>
+
+        <!-- ── Main Tool ───────────────────────────────────── -->
+        <main class="tool container">
+            <p class="tool__lead">
+                Paste a YouTube link below, then click <strong>Grab Thumbnails</strong>.
+            </p>
+
+            <form class="input-section" id="grabForm">
+                <input type="text"
+                       id="videoUrl"
+                       placeholder="https://youtu.be/dQw4w9WgXcQ"
+                       required />
+                <button type="submit" id="getThumbnailsBtn">
+                    <i class="fa-solid fa-download"></i>&nbsp;Grab Thumbnails
+                </button>
+            </form>
+
+            <!-- thumbnails injected here -->
+            <section class="thumbnails-display" id="thumbnailsDisplay"></section>
+        </main>
+
+        <!-- ── Footer ──────────────────────────────────────── -->
+        <footer>
+            <p>Made by Adwaith Prasanth</p>
+
+            <!-- Gmail compose link with pre-filled subject & body -->
+            <p>
+                <a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=adwaithprasanth.connect@gmail.com&amp;su=ThumbGrab%20Feedback&amp;body=Hi%20Adwaith%2C%0A%0AI%20love%20ThumbGrab%21%20Here%20are%20my%20thoughts%3A%0A"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    <i class="fa-solid fa-envelope"></i> Email
+                </a> | 
+                <a href="https://github.com/AdwaithPrasanth"
+                   target="_blank"
+                   rel="noopener">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </a>
+            </p>
+        </footer>
+
+    </div><!-- /page-wrapper -->
+
+    <script src="script.js"></script>
+</body>
+</html>

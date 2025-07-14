@@ -1,0 +1,196 @@
+/* ─── Root Palette ───────────────────────────────────────── */
+:root {
+    --yellow: #ffd93b;      /* primary accent */
+    --yellow-dark: #e6c317; /* hover shade   */
+    --black:  #111;
+    --white:  #fff;
+    --gray-100: #f7f7f7;    /* very light “white” hue */
+    --radius: 10px;
+    --transition: 0.25s ease;
+}
+
+/* ─── Global Reset & Typography ─────────────────────────── */
+* { box-sizing: border-box; }
+html,body { height: 100%; margin: 0; }
+body {
+    font-family: "Poppins", sans-serif;
+    color: var(--black);
+    background: var(--gray-100);
+    display: flex;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    align-items: center;
+}
+
+/* ─── Hero Section ──────────────────────────────────────── */
+.hero {
+    position: relative;
+    width: 100%;
+    padding: 6rem 1rem 4rem;
+    overflow: hidden;
+    text-align: center;
+    color: var(--white);
+}
+.hero__content {
+    max-width: 800px;
+    margin: 0 auto;
+    z-index: 1;
+    position: relative;
+}
+.hero h1 {
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 0 0 0.5rem;
+}
+.hero p {
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+/* subtle angled yellow gradient background */
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, var(--yellow-dark) 0%, var(--yellow) 60%, var(--yellow) 100%);
+    transform: skewY(-3deg);
+    transform-origin: top left;
+    z-index: 0;
+}
+
+/* ─── Main Container ────────────────────────────────────── */
+.container {
+    background: var(--white);
+    width: 100%;
+    max-width: 900px;
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem 3rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    margin-top: -3.5rem;           /* “card” overlaps hero */
+    z-index: 2;
+}
+
+.tool__lead {
+    text-align: center;
+    margin: 0 0 1.75rem;
+}
+
+/* ─── Input Section ─────────────────────────────────────── */
+.input-section {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.input-section input[type="text"] {
+    flex: 1 1 350px;
+    min-width: 0;
+    padding: 0.9rem 1.1rem;
+    border: 2px solid var(--black);
+    border-radius: var(--radius);
+    font-size: 1rem;
+}
+.input-section button {
+    background: var(--yellow);
+    color: var(--black);
+    border: none;
+    padding: 0.9rem 1.25rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+}
+.input-section button:hover,
+.input-section button:focus-visible {
+    background: var(--yellow-dark);
+    transform: translateY(-2px);
+}
+
+/* ─── Thumbnails Grid ───────────────────────────────────── */
+.thumbnails-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+}
+
+/* each thumbnail “card” */
+.thumbnail-item {
+    background: var(--white);
+    border: 1px solid #e0e0e0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    transform: translateY(20px);
+    opacity: 0;
+    animation: fadeUp 0.6s forwards;
+}
+
+.thumbnail-item img {
+    width: 100%;
+    display: block;
+}
+
+/* info + download link */
+.thumb-info {
+    padding: 0.85rem 0.9rem 1.1rem;
+    text-align: center;
+}
+.thumb-info p {
+    font-size: 0.85rem;
+    margin: 0 0 0.9rem;
+}
+.thumb-info a {
+    display: inline-block;
+    text-decoration: none;
+    background: var(--yellow);
+    color: var(--black);
+    padding: 0.5rem 0.9rem;
+    border-radius: calc(var(--radius) / 1.4);
+    font-weight: 600;
+    transition: background var(--transition), transform var(--transition);
+}
+.thumb-info a:hover {
+    background: var(--yellow-dark);
+    transform: translateY(-2px);
+}
+
+/* hover effect for whole card */
+.thumbnail-item:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: translateY(-4px);
+}
+
+/* entrance animation */
+@keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Footer ───────────────────────────────────────────── */
+footer {
+    margin-top: auto;
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+    font-size: 0.9rem;
+    color: var(--black);
+}
+footer p { margin: 0.3rem 0; }
+footer a {
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition);
+}
+footer a:hover { color: var(--yellow-dark); }
+
+/* ─── Responsiveness tweaks ─────────────────────────────── */
+@media (max-width: 540px) {
+    .container { padding: 2rem 1.25rem 2.5rem; }
+    .input-section input[type="text"] { flex: 1 1 100%; }
+    .input-section button           { width: 100%; }
+}
