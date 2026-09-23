@@ -22,7 +22,12 @@
         <!-- ── Header / Hero ───────────────────────────────── -->
         <header class="hero">
             <div class="hero__inner">
-                <p class="hero__mark">ThumbGrab</p>
+                <div class="hero__top">
+                    <p class="hero__mark">ThumbGrab</p>
+                    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+                        <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <h1>Every resolution.<br>One frame.</h1>
                 <p class="hero__lead">
                     Drop in a YouTube link. We pull every thumbnail size YouTube actually stored for it —
@@ -50,7 +55,43 @@
                 </button>
             </form>
 
-            <section class="filmstrip" id="thumbnailsDisplay" aria-live="polite"></section>
+            <section id="thumbnailsDisplay" aria-live="polite">
+                <div class="empty-state" id="emptyState">
+                    <svg viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+                        <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.35">
+                            <circle cx="10" cy="9" r="2.4" />
+                            <circle cx="34" cy="9" r="2.4" />
+                            <circle cx="58" cy="9" r="2.4" />
+                            <circle cx="82" cy="9" r="2.4" />
+                            <circle cx="106" cy="9" r="2.4" />
+                            <circle cx="130" cy="9" r="2.4" />
+                            <circle cx="154" cy="9" r="2.4" />
+                            <circle cx="178" cy="9" r="2.4" />
+                            <circle cx="202" cy="9" r="2.4" />
+                            <circle cx="226" cy="9" r="2.4" />
+                            <circle cx="250" cy="9" r="2.4" />
+                            <circle cx="274" cy="9" r="2.4" />
+                            <circle cx="298" cy="9" r="2.4" />
+                            <circle cx="322" cy="9" r="2.4" />
+                            <circle cx="346" cy="9" r="2.4" />
+                            <circle cx="370" cy="9" r="2.4" />
+                            <circle cx="394" cy="9" r="2.4" />
+                            <circle cx="418" cy="9" r="2.4" />
+                        </g>
+                        <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-dasharray="4 4" opacity="0.55">
+                            <rect x="0"   y="26" width="96"  height="96" rx="2" />
+                            <rect x="112" y="26" width="130" height="96" rx="2" />
+                            <rect x="258" y="26" width="176" height="96" rx="2" />
+                        </g>
+                        <g font-family="'IBM Plex Mono', monospace" font-size="10" fill="currentColor" opacity="0.5">
+                            <text x="6"   y="112">01</text>
+                            <text x="118" y="112">02</text>
+                            <text x="264" y="112">03</text>
+                        </g>
+                    </svg>
+                    <p>Nothing grabbed yet — paste a link above and this strip fills in.</p>
+                </div>
+            </section>
         </main>
 
         <div class="sprockets" aria-hidden="true"></div>

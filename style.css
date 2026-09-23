@@ -1,5 +1,6 @@
 /* ─── Tokens ─────────────────────────────────────────────── */
 :root {
+    /* dark theme (default — the site's native darkroom mode) */
     --bg:          #16151a;
     --bg-raised:   #1d1c22;
     --ink:         #f2f0ea;
@@ -7,11 +8,36 @@
     --safelight:   #ff5a36;
     --safelight-dim: #c6421f;
     --line:        #34333b;
+    --accent-text: var(--safelight); /* accent used as text/border — swapped per theme for contrast */
+
+    /* fixed regardless of theme: the accent hex never changes,
+       so text sitting on the accent needs its own constant pair */
+    --on-accent:       #16151a;
+    --on-accent-hover: #f2f0ea;
+    --badge-ink:       #f2f0ea; /* frame numbers sit on a fixed dark chip over the photo */
+
     --radius:      3px;
     --ease:        cubic-bezier(0.16, 1, 0.3, 1);
 
     --font-display: "Space Grotesk", sans-serif;
     --font-mono:    "IBM Plex Mono", monospace;
+}
+
+/* light theme — same darkroom concept, printed on paper instead of
+   viewed on a lightbox. Accent hex stays constant (it's the brand
+   mark); everything that reads accent-as-text swaps to the darker
+   shade so it still clears contrast on a pale background. */
+[data-theme="light"] {
+    --bg:          #f5f3ee;
+    --bg-raised:   #ffffff;
+    --ink:         #1b1a1f;
+    --ink-dim:     #6b6a72;
+    --line:        #ddd9d0;
+    --accent-text: var(--safelight-dim);
+}
+
+body {
+    transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
 }
 
 /* ─── Reset ──────────────────────────────────────────────── */
@@ -66,12 +92,38 @@ a { color: inherit; }
     max-width: 760px;
     margin: 0 auto;
 }
+.hero__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 1.75rem;
+}
 .hero__mark {
     font-family: var(--font-mono);
     font-size: 0.8rem;
     letter-spacing: 0.02em;
-    color: var(--safelight);
-    margin: 0 0 1.75rem;
+    color: var(--accent-text);
+    margin: 0;
+}
+
+.theme-toggle {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+    border-color: var(--accent-text);
+    color: var(--accent-text);
 }
 .hero h1 {
     font-weight: 700;
@@ -108,11 +160,11 @@ a { color: inherit; }
     transition: border-color 0.2s var(--ease);
 }
 .prompt-bar:focus-within {
-    border-color: var(--safelight);
+    border-color: var(--accent-text);
 }
 .prompt-bar__glyph {
     font-family: var(--font-mono);
-    color: var(--safelight);
+    color: var(--accent-text);
     font-size: 1rem;
 }
 .prompt-bar input[type="text"] {
@@ -137,7 +189,7 @@ a { color: inherit; }
     align-items: center;
     gap: 0.5rem;
     background: var(--safelight);
-    color: var(--bg);
+    color: var(--on-accent);
     border: none;
     border-radius: calc(var(--radius) - 1px);
     padding: 0.85rem 1.15rem;
@@ -151,7 +203,7 @@ a { color: inherit; }
 .prompt-bar button:hover,
 .prompt-bar button:focus-visible {
     background: var(--safelight-dim);
-    color: var(--ink);
+    color: var(--on-accent-hover);
 }
 .prompt-bar button:disabled {
     opacity: 0.6;
@@ -167,7 +219,27 @@ a { color: inherit; }
     margin: 2.5rem 0 0;
     padding-left: 0.1rem;
 }
-.status-message--error { color: var(--safelight); }
+.status-message--error { color: var(--accent-text); }
+
+/* ─── Empty state ─────────────────────────────────────────── */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 2.5rem 0 0.5rem;
+    color: var(--ink-dim);
+}
+.empty-state svg {
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+}
+.empty-state p {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    margin: 0;
+}
 
 /* ─── Filmstrip / frames ─────────────────────────────────── */
 .filmstrip {
@@ -207,7 +279,7 @@ a { color: inherit; }
     left: 0.5rem;
     font-family: var(--font-mono);
     font-size: 0.7rem;
-    color: var(--ink);
+    color: var(--badge-ink);
     background: rgba(22, 21, 26, 0.72);
     padding: 0.15rem 0.4rem;
     border-radius: 2px;
@@ -249,8 +321,8 @@ a { color: inherit; }
 }
 .frame__download:hover,
 .frame__download:focus-visible {
-    border-color: var(--safelight);
-    color: var(--safelight);
+    border-color: var(--accent-text);
+    color: var(--accent-text);
 }
 
 /* ─── Footer ─────────────────────────────────────────────── */
@@ -278,7 +350,7 @@ footer {
     color: var(--ink-dim);
     transition: color 0.15s var(--ease);
 }
-.footer__links a:hover { color: var(--safelight); }
+.footer__links a:hover { color: var(--accent-text); }
 
 /* ─── Responsive ─────────────────────────────────────────── */
 @media (max-width: 540px) {

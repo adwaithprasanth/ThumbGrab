@@ -4,6 +4,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const grabForm          = document.getElementById("grabForm");
     const submitBtn         = document.getElementById("getThumbnailsBtn");
     const submitBtnDefaultHTML = submitBtn.innerHTML;
+    const themeToggle       = document.getElementById("themeToggle");
+
+    /* ── Theme toggle ──────────────────────────────────────── */
+    const THEME_KEY = "thumbgrab-theme";
+    const root = document.documentElement;
+
+    function applyTheme(theme) {
+        if (theme === "light") {
+            root.setAttribute("data-theme", "light");
+            themeToggle.innerHTML = `<i class="fa-solid fa-sun" aria-hidden="true"></i>`;
+            themeToggle.setAttribute("aria-label", "Switch to dark mode");
+        } else {
+            root.removeAttribute("data-theme");
+            themeToggle.innerHTML = `<i class="fa-solid fa-moon" aria-hidden="true"></i>`;
+            themeToggle.setAttribute("aria-label", "Switch to light mode");
+        }
+    }
+
+    let saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch { /* storage unavailable, ignore */ }
+
+    const systemPrefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    applyTheme(saved || (systemPrefersLight ? "light" : "dark"));
+
+    themeToggle.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        applyTheme(next);
+        try { localStorage.setItem(THEME_KEY, next); } catch { /* storage unavailable, ignore */ }
+    });
 
     /* ── Extract YouTube Video ID ─────────────────────────── */
     function getYouTubeVideoId(url) {
