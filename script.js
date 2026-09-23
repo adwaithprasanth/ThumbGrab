@@ -30,6 +30,31 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
+    /* ── Probe a single thumbnail URL ─────────────────────── *
+     * Loads the image directly (no CORS-restricted fetch needed).
+     * YouTube doesn't 404 missing maxres/sd thumbnails — it serves
+     * a 120×90 gray placeholder with HTTP 200 instead, so a plain
+     * fetch/HEAD check can't tell real vs. missing apart. We load
+     * the image and reject anything that comes back at exactly the
+     * placeholder's dimensions. */
+    function probeThumbnail(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            const timer = setTimeout(() => resolve(null), 6000); // don't hang forever
+
+            img.onload = () => {
+                clearTimeout(timer);
+                const isPlaceholder = img.naturalWidth === 120 && img.naturalHeight === 90;
+                resolve(isPlaceholder ? null : url);
+            };
+            img.onerror = () => {
+                clearTimeout(timer);
+                resolve(null);
+            };
+            img.src = url;
+        });
+    }
+
     /* ── Display Thumbnails ───────────────────────────────── */
     async function displayThumbnails(videoId) {
         thumbnailsDisplay.innerHTML = "";
@@ -42,21 +67,22 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        thumbnailsDisplay.innerHTML = `<p class="info-message">Fetching thumbnails…</p>`;
+
         const urls = generateThumbnailUrls(videoId);
+        const labels = Object.keys(urls);
+
+        // Probe every resolution in parallel instead of one-by-one.
+        const results = await Promise.all(
+            labels.map((label) => probeThumbnail(urls[label]))
+        );
+
+        thumbnailsDisplay.innerHTML = "";
         let idx = 0, shownAny = false;
 
-        for (const label in urls) {
-            const url = urls[label];
-
-            try {
-                const res = await fetch(url, { method: "HEAD" });
-                if (!res.ok || Number(res.headers.get("Content-Length") || 0) === 0) {
-                    continue;
-                }
-            } catch {
-                console.warn(`HEAD request failed for: ${url}`);
-                continue;
-            }
+        labels.forEach((label, i) => {
+            const url = results[i];
+            if (!url) return;
 
             shownAny = true;
 
@@ -88,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
             info.append(p, a);
             card.append(img, info);
             thumbnailsDisplay.append(card);
-        }
+        });
 
         if (!shownAny) {
             thumbnailsDisplay.innerHTML = `
@@ -99,10 +125,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ── Form Submission ──────────────────────────────────── */
-    grabForm.addEventListener("submit", (e) => {
+    const submitBtn = document.getElementById("getThumbnailsBtn");
+    const submitBtnDefaultHTML = submitBtn.innerHTML;
+
+    grabForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const url = videoUrlInput.value.trim();
         const videoId = getYouTubeVideoId(url);
-        displayThumbnails(videoId);
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Grabbing…`;
+
+        try {
+            await displayThumbnails(videoId);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = submitBtnDefaultHTML;
+        }
     });
 });
