@@ -3,67 +3,72 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ThumbGrab</title>
+    <title>ThumbGrab — pull every frame</title>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <!-- Font Awesome 6 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-          rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="page-wrapper">
 
-        <!-- ── Hero ────────────────────────────────────────── -->
+        <div class="sprockets" aria-hidden="true"></div>
+
+        <!-- ── Header / Hero ───────────────────────────────── -->
         <header class="hero">
-            <div class="hero__content">
-                <h1><i class="fa-solid fa-image"></i> ThumbGrab</h1>
-                <p>Instantly fetch high-resolution YouTube thumbnails.</p>
+            <div class="hero__inner">
+                <p class="hero__mark">ThumbGrab</p>
+                <h1>Every resolution.<br>One frame.</h1>
+                <p class="hero__lead">
+                    Drop in a YouTube link. We pull every thumbnail size YouTube actually stored for it —
+                    from the 120×90 preview up to the full 1280×720 frame.
+                </p>
             </div>
-            <div class="hero__bg"></div>
         </header>
 
-        <!-- ── Main Tool ───────────────────────────────────── -->
-        <main class="tool container">
-            <p class="tool__lead">
-                Paste a YouTube link below, then click <strong>Grab Thumbnails</strong>.
-            </p>
+        <div class="sprockets" aria-hidden="true"></div>
 
-            <form class="input-section" id="grabForm">
+        <!-- ── Tool ────────────────────────────────────────── -->
+        <main class="tool">
+            <form class="prompt-bar" id="grabForm">
+                <span class="prompt-bar__glyph" aria-hidden="true">&gt;</span>
                 <input type="text"
                        id="videoUrl"
-                       placeholder="https://youtu.be/dQw4w9WgXcQ"
+                       placeholder="youtu.be/dQw4w9WgXcQ"
                        aria-label="YouTube video URL"
+                       autocomplete="off"
+                       spellcheck="false"
                        required />
                 <button type="submit" id="getThumbnailsBtn">
-                    <i class="fa-solid fa-download"></i>&nbsp;Grab Thumbnails
+                    <span class="btn__label">Grab</span>
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </button>
             </form>
 
-            <!-- thumbnails injected here -->
-            <section class="thumbnails-display" id="thumbnailsDisplay"></section>
+            <section class="filmstrip" id="thumbnailsDisplay" aria-live="polite"></section>
         </main>
+
+        <div class="sprockets" aria-hidden="true"></div>
 
         <!-- ── Footer ──────────────────────────────────────── -->
         <footer>
-            <p>Made by Adwaith Prasanth</p>
-
-            <!-- Gmail compose link with pre-filled subject & body -->
-            <p>
-                <a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=adwaithprasanth.connect@gmail.com&amp;su=ThumbGrab%20Feedback&amp;body=Hi%20Adwaith%2C%0A%0AI%20love%20ThumbGrab%21%20Here%20are%20my%20thoughts%3A%0A"
-                   target="_blank"
-                   rel="noopener noreferrer">
-                    <i class="fa-solid fa-envelope"></i> Email
-                </a> | 
-                <a href="https://github.com/AdwaithPrasanth"
-                   target="_blank"
-                   rel="noopener">
-                    <i class="fa-brands fa-github"></i> GitHub
-                </a>
-            </p>
+            <div class="footer__inner">
+                <p class="footer__credit">Built by Adwaith Prasanth</p>
+                <p class="footer__links">
+                    <a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=adwaithprasanth.connect@gmail.com&amp;su=ThumbGrab%20Feedback&amp;body=Hi%20Adwaith%2C%0A%0AI%20love%20ThumbGrab%21%20Here%20are%20my%20thoughts%3A%0A"
+                       target="_blank" rel="noopener noreferrer">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i> Email
+                    </a>
+                    <a href="https://github.com/AdwaithPrasanth" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
+                    </a>
+                </p>
+            </div>
         </footer>
 
     </div><!-- /page-wrapper -->

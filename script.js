@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const videoUrlInput     = document.getElementById("videoUrl");
     const thumbnailsDisplay = document.getElementById("thumbnailsDisplay");
     const grabForm          = document.getElementById("grabForm");
+    const submitBtn         = document.getElementById("getThumbnailsBtn");
+    const submitBtnDefaultHTML = submitBtn.innerHTML;
 
     /* ── Extract YouTube Video ID ─────────────────────────── */
     function getYouTubeVideoId(url) {
@@ -22,11 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!videoId) return {};
         const base = `https://img.youtube.com/vi/${videoId}/`;
         return {
-            "Default (120×90)"           : base + "default.jpg",
-            "Medium Quality (320×180)"   : base + "mqdefault.jpg",
-            "High Quality (480×360)"     : base + "hqdefault.jpg",
-            "SD (640×480)"               : base + "sddefault.jpg",
-            "Max Res (1280×720)"         : base + "maxresdefault.jpg"
+            "Default"    : { file: "default.jpg",    dims: "120 × 90" },
+            "Medium"     : { file: "mqdefault.jpg",   dims: "320 × 180" },
+            "High"       : { file: "hqdefault.jpg",   dims: "480 × 360" },
+            "SD"         : { file: "sddefault.jpg",   dims: "640 × 480" },
+            "Max Res"    : { file: "maxresdefault.jpg", dims: "1280 × 720" }
         };
     }
 
@@ -58,83 +60,103 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ── Display Thumbnails ───────────────────────────────── */
     async function displayThumbnails(videoId) {
         thumbnailsDisplay.innerHTML = "";
+        thumbnailsDisplay.classList.remove("filmstrip");
 
         if (!videoId) {
             thumbnailsDisplay.innerHTML = `
-                <p class="error-message">
-                    Please enter a valid YouTube video URL.
+                <p class="status-message status-message--error">
+                    That doesn't look like a YouTube link. Paste a video, shorts, or youtu.be URL.
                 </p>`;
             return;
         }
 
-        thumbnailsDisplay.innerHTML = `<p class="info-message">Fetching thumbnails…</p>`;
+        thumbnailsDisplay.innerHTML = `<p class="status-message">Reading frames…</p>`;
 
         const urls = generateThumbnailUrls(videoId);
         const labels = Object.keys(urls);
 
         // Probe every resolution in parallel instead of one-by-one.
         const results = await Promise.all(
-            labels.map((label) => probeThumbnail(urls[label]))
+            labels.map((label) => probeThumbnail(`https://img.youtube.com/vi/${videoId}/${urls[label].file}`))
         );
 
         thumbnailsDisplay.innerHTML = "";
-        let idx = 0, shownAny = false;
 
-        labels.forEach((label, i) => {
-            const url = results[i];
-            if (!url) return;
+        const found = labels
+            .map((label, i) => ({ label, dims: urls[label].dims, url: results[i] }))
+            .filter((f) => f.url);
 
-            shownAny = true;
+        if (found.length === 0) {
+            thumbnailsDisplay.innerHTML = `
+                <p class="status-message status-message--error">
+                    No frames found. The video might be private, deleted, or the link's wrong.
+                </p>`;
+            return;
+        }
 
-            const card = document.createElement("div");
-            card.className = "thumbnail-item";
-            card.style.animationDelay = `${idx * 60}ms`;
-            idx++;
+        thumbnailsDisplay.classList.add("filmstrip");
+
+        found.forEach((f, idx) => {
+            const num = String(idx + 1).padStart(2, "0");
+
+            const frame = document.createElement("article");
+            frame.className = "frame";
+            frame.style.animationDelay = `${idx * 70}ms`;
+
+            const figure = document.createElement("div");
+            figure.className = "frame__figure";
 
             const img = document.createElement("img");
-            img.src = url;
-            img.alt = `${label} thumbnail`;
-            img.onerror = () => {
-                card.style.display = "none";
-                console.warn(`Image failed to load: ${url}`);
-            };
+            img.src = f.url;
+            img.alt = `${f.label} thumbnail, ${f.dims}`;
+            img.loading = "lazy";
+            img.onerror = () => { frame.style.display = "none"; };
 
-            const info = document.createElement("div");
-            info.className = "thumb-info";
+            const number = document.createElement("span");
+            number.className = "frame__number";
+            number.textContent = num;
 
-            const p = document.createElement("p");
-            p.textContent = label;
+            figure.append(img, number);
 
-            const a = document.createElement("a");
-            a.href = url;
-            a.target = "_blank";
-            a.download = `${videoId}_${label.replace(/[^\w]+/g, "_").toLowerCase()}.jpg`;
-            a.textContent = "Download";
+            const meta = document.createElement("div");
+            meta.className = "frame__meta";
 
-            info.append(p, a);
-            card.append(img, info);
-            thumbnailsDisplay.append(card);
+            const text = document.createElement("div");
+            text.className = "frame__text";
+
+            const label = document.createElement("p");
+            label.className = "frame__label";
+            label.textContent = f.label;
+
+            const dims = document.createElement("p");
+            dims.className = "frame__dims";
+            dims.textContent = f.dims;
+
+            text.append(label, dims);
+
+            const download = document.createElement("a");
+            download.className = "frame__download";
+            download.href = f.url;
+            download.target = "_blank";
+            download.rel = "noopener";
+            download.download = `${videoId}_${f.label.replace(/[^\w]+/g, "_").toLowerCase()}.jpg`;
+            download.setAttribute("aria-label", `Download ${f.label} thumbnail`);
+            download.innerHTML = `<i class="fa-solid fa-arrow-down" aria-hidden="true"></i>`;
+
+            meta.append(text, download);
+            frame.append(figure, meta);
+            thumbnailsDisplay.append(frame);
         });
-
-        if (!shownAny) {
-            thumbnailsDisplay.innerHTML = `
-                <p class="info-message">
-                    Could not retrieve thumbnails. The video might be private, deleted, or the URL is invalid.
-                </p>`;
-        }
     }
 
     /* ── Form Submission ──────────────────────────────────── */
-    const submitBtn = document.getElementById("getThumbnailsBtn");
-    const submitBtnDefaultHTML = submitBtn.innerHTML;
-
     grabForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const url = videoUrlInput.value.trim();
         const videoId = getYouTubeVideoId(url);
 
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Grabbing…`;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span class="btn__label">Grabbing</span>`;
 
         try {
             await displayThumbnails(videoId);
